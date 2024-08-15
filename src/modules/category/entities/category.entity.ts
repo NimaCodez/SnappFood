@@ -17,6 +17,8 @@ export class Category {
   @Column()
   image: string;
   @Column()
+  image_key: string;
+  @Column()
   show: boolean;
   @Column({ nullable: true })
   parentId: number;
