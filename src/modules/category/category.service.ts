@@ -3,6 +3,7 @@ import {
 	ConflictException,
 	Inject,
 	Injectable,
+	InternalServerErrorException,
 	NotFoundException,
 	Scope,
 } from '@nestjs/common';
@@ -103,46 +104,42 @@ export class CategoryService {
 		image: Express.Multer.File,
 	) {
 		let category = await this.findOneById(id);
-		let updateBody = {};
+		let updateBody: Partial<Category> = FilterData(updateCategoryDto);
 		let imageWasUpdated = false;
 
 		if (image) {
-			console.log(image)
 			await this.s3Service.deleteFile(category.image_key);
-			const { Location } = await this.s3Service.uploadFile(
+			const { Location, Key } = await this.s3Service.uploadFile(
 				image,
 				'category-images',
 			);
 			
-			category.image = Location;
+			updateBody.image = Location;
+			updateBody.image_key = Key;
 			imageWasUpdated = true;
-
-			const { affected } = await this.categoryRepo.update(id, category);
-			if (affected === 1) {
-				return {
-					message: 'Category was updated successfully.',
-				}
-			}
 		}
 		
-		Object.assign(updateBody, FilterData(updateCategoryDto));
-		if (Object.keys(updateBody).length > 0) {
+		if (imageWasUpdated || Object.keys(updateBody).length > 0) {
 			const { affected } = await this.categoryRepo.update(category.id, updateBody);
 			if (affected === 1) {
 				return {
 					message: 'Category was updated successfully.',
 				}
+			} else {
+				throw new InternalServerErrorException('Failed to update category');
 			}
 		}
-		
-		if (Object.keys(updateBody).length === 0 && !imageWasUpdated)
-			throw new BadRequestException('Nothing was updated');
+
+		throw new BadRequestException('Nothing was updated');
 	}
 
 	async remove(id: number) {
 		const category = await this.findOneById(id);
 		const { affected } = await this.categoryRepo.delete(category.id);
-		if (affected === 1) return { message: 'Category deleted successfully.'}
+		if (affected === 1) {
+			await this.s3Service.deleteFile(category.image_key);
+			return { message: 'Category deleted successfully.'}
+		}
 		else throw new BadRequestException('Something went wrong during deleting data.')
 	}
 }

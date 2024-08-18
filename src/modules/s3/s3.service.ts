@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
+import { createHash } from 'crypto';
 import { configDotenv } from 'dotenv';
 import { extname, join } from 'path';
 configDotenv({ path: join(process.cwd(), '.env') });
@@ -24,7 +25,7 @@ export class S3Service {
     return await this.s3
       .upload({
         Bucket: process.env.S3_BUCKET_NAME,
-        Key: `${folderName}/${Date.now()}${ext}`,
+        Key: `${folderName}/${createHash('sha256').update(file.buffer).digest('hex')}${ext}`,
         Body: file.buffer,
       })
       .promise();
