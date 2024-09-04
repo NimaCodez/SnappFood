@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsMobilePhone, IsNotEmpty, IsString } from 'class-validator';
-import { SignupMethods } from '../enums/signup-methods.enum';
+import { IsMobilePhone, IsNotEmpty, IsString } from 'class-validator';
 
 export class SignupDto {
   @IsString()

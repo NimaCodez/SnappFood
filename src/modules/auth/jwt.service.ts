@@ -13,14 +13,15 @@ export class JWTService {
 
   async Sign(mobile: string, tokenType: TokenTypes) {
     try {
-      const secret =
-        tokenType === 'accessToken'
-          ? process.env.JWT_ACCESS_TOKEN_SECRET
-          : process.env.JWT_REFRESH_TOKEN_SECRET;
+      const { JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET } = process.env;
 
       let options: JwtSignOptions = {
-        secret,
-        expiresIn: '15m',
+        secret:
+          tokenType === TokenTypes.AccessToken
+            ? JWT_ACCESS_TOKEN_SECRET
+            : JWT_REFRESH_TOKEN_SECRET,
+
+        expiresIn: tokenType == TokenTypes.AccessToken ? '15m' : '1w',
       };
 
       return await this.jwtService.signAsync({ mobile }, options);
