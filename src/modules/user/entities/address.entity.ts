@@ -24,8 +24,8 @@ export class UserAddress {
   postal_code: string;
   @Column()
   userId: number;
-  @ManyToOne(() => User, user => user.user_addresses, {onDelete: 'CASCADE'})
-  user: User;
+  // @ManyToOne(() => User, user => user.user_addresses, {onDelete: 'CASCADE'})
+  // user: User;
   @CreateDateColumn({ type: 'time with time zone' })
   created_at: Date;
   @UpdateDateColumn({ type: 'time with time zone' })

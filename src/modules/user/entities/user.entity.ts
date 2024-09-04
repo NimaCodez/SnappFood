@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserAddress } from './address.entity';
+import { OTP } from 'src/modules/auth/entity/otp.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -20,14 +23,21 @@ export class User {
   mobile: string;
   @Column({ nullable: true, unique: true })
   email: string;
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   invite_code: string;
   @Column({ default: 0 })
   score: number;
   @Column({ nullable: true })
-  agentId: number;
-  @OneToMany(() => UserAddress, userAddr => userAddr.user)
-  user_addresses: UserAddress[];
+  agent_id: number;
+  // @OneToMany(() => UserAddress, userAddr => userAddr.user, { nullable: true })
+  // user_addresses: UserAddress[];
+  
+  @Column({ nullable: true })
+  otp_id: number;
+  @OneToOne(() => OTP, otp => otp.user)
+  @JoinColumn()
+  otp: OTP;
+
   @CreateDateColumn({ type: 'time with time zone' })
   created_at: Date;
   @UpdateDateColumn({ type: 'time with time zone' })
