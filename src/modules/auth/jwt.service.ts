@@ -15,7 +15,7 @@ export class JWTService {
     try {
       const { JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET } = process.env;
 
-      let options: JwtSignOptions = {
+      const options: JwtSignOptions = {
         secret:
           tokenType === TokenTypes.AccessToken
             ? JWT_ACCESS_TOKEN_SECRET
@@ -28,6 +28,14 @@ export class JWTService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async signAccessToken(payload) {
+
+  }
+
+  async signRefreshToken(payload) {
+    
   }
 
   async Verify(token: string) {
