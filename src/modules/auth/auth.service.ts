@@ -7,7 +7,6 @@ import { OTPService } from './otp.service';
 import { OTP } from './entity/otp.entity';
 import { VerifyOTPDto } from './dto/verify-otp.dto';
 import { JWTService } from './jwt.service';
-import { TokenTypes } from './enums/token-types.enum';
 
 @Injectable()
 export class AuthService {
@@ -64,8 +63,8 @@ export class AuthService {
 
   private async GenerateTokens(phoneNumber: string): Promise<[string, string]> {
     return await Promise.all([
-      this.jwtService.Sign(phoneNumber, TokenTypes.AccessToken),
-      this.jwtService.Sign(phoneNumber, TokenTypes.RefreshToken),
+      this.jwtService.signAccessToken(phoneNumber),
+      this.jwtService.signRefreshToken(phoneNumber),
     ]);
   }
 

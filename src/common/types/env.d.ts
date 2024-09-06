@@ -13,5 +13,7 @@ namespace NodeJS {
     RESEND_API_KEY?: string;
     JWT_ACCESS_TOKEN_SECRET?: string;
     JWT_REFRESH_TOKEN_SECRET?: string;
+    ACCESS_TOKEN_EXPIRY_TIME?: string;
+    REFRESH_TOKEN_EXPIRY_TIME?: string;
   }
 }
